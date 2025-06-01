@@ -2,7 +2,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import MainLayout from "../MainLayout";
 
 const PrivateRoute = () => {
-  const isAdmin = localStorage.getItem("token");
+  console.log("token:", localStorage.getItem("otabek"));
+
+  const isAdmin = localStorage.getItem("otabek");
 
   return isAdmin ? <MainLayout /> : <Navigate to="/login" replace />;
 };
