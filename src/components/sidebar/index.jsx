@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Drawer,
@@ -13,12 +13,30 @@ import {
   Chip,
   useMediaQuery,
   useTheme,
-} from "@mui/material"
-import { Person, Group, Add, Settings, Logout, Close } from "@mui/icons-material"
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  DialogActions,
+  Button,
+} from "@mui/material";
+import {
+  Person,
+  Group,
+  Add,
+  Settings,
+  Logout,
+  Close,
+} from "@mui/icons-material";
+import { useState } from "react";
+import { useCreateGroupMutation } from "../../api/mutation";
 
 export default function Sidebar({ isMobile, mobileOpen, handleDrawerToggle }) {
-  const theme = useTheme()
-  const isTablet = useMediaQuery(theme.breakpoints.down("lg"))
+  const [dialog, setDialog] = useState(false);
+  const theme = useTheme();
+  const isTablet = useMediaQuery(theme.breakpoints.down("lg"));
+  const { mutate } = useCreateGroupMutation();
 
   const sidebarContent = (
     <div className="h-full bg-white">
@@ -65,35 +83,29 @@ export default function Sidebar({ isMobile, mobileOpen, handleDrawerToggle }) {
                 fontSize: isMobile ? "0.9rem" : "1rem",
               }}
             />
-            <Chip label="5" size="small" className="bg-gray-100 text-gray-600" />
-          </ListItem>
-
-          <ListItem className="rounded-xl hover:bg-gray-50 cursor-pointer transition-all duration-200 hover:shadow-sm">
-            <ListItemIcon>
-              <Add className="text-gray-600" />
-            </ListItemIcon>
-            <ListItemText
-              primary="Create Group"
-              primaryTypographyProps={{
-                fontWeight: 500,
-                fontSize: isMobile ? "0.9rem" : "1rem",
-              }}
+            <Chip
+              label="5"
+              size="small"
+              className="bg-gray-100 text-gray-600"
             />
           </ListItem>
 
-          <Divider className="my-4" />
-
           <ListItem className="rounded-xl hover:bg-gray-50 cursor-pointer transition-all duration-200 hover:shadow-sm">
-            <ListItemIcon>
-              <Settings className="text-gray-600" />
-            </ListItemIcon>
-            <ListItemText
-              primary="Settings"
-              primaryTypographyProps={{
-                fontWeight: 500,
-                fontSize: isMobile ? "0.9rem" : "1rem",
-              }}
-            />
+            <button
+              className="flex border-none"
+              onClick={() => setDialog(true)}
+            >
+              <ListItemIcon>
+                <Add className="text-gray-600" />
+              </ListItemIcon>
+              <ListItemText
+                primary="Create Group"
+                primaryTypographyProps={{
+                  fontWeight: 500,
+                  fontSize: isMobile ? "0.9rem" : "1rem",
+                }}
+              />
+            </button>
           </ListItem>
         </List>
 
@@ -103,15 +115,67 @@ export default function Sidebar({ isMobile, mobileOpen, handleDrawerToggle }) {
               n17
             </Typography>
             <Tooltip title="Logout">
-              <IconButton size="small" className="text-gray-400 hover:text-red-500 transition-colors duration-200">
+              <IconButton
+                size="small"
+                className="text-gray-400 hover:text-red-500 transition-colors duration-200"
+              >
                 <Logout fontSize="small" />
               </IconButton>
             </Tooltip>
           </div>
         </div>
       </div>
+      <Dialog
+        open={dialog}
+        slotProps={{
+          paper: {
+            component: "form",
+            onSubmit: (event) => {
+              event.preventDefault();
+              const formData = new FormData(event.currentTarget);
+              const formJson = Object.fromEntries(formData.entries());
+              const email = formJson.email;
+              const password = formJson.password;
+              mutate({ name: email, password: password });
+              console.log("Email:", email);
+              console.log("Password:", password);
+              setDialog(false);
+            },
+          },
+        }}
+      >
+        <DialogTitle>Guruh yaratish</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="name"
+            name="email"
+            label="Guruh nomi"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="password"
+            name="password"
+            label="Parol"
+            type="password"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialog(false)}>Cancel</Button>
+          <Button type="submit">Submit</Button>
+        </DialogActions>
+      </Dialog>
     </div>
-  )
+  );
 
   if (isMobile) {
     return (
@@ -131,12 +195,16 @@ export default function Sidebar({ isMobile, mobileOpen, handleDrawerToggle }) {
       >
         {sidebarContent}
       </Drawer>
-    )
+    );
   }
 
   return (
-    <div className={`${isTablet ? "w-64" : "w-72"} bg-white min-h-screen shadow-xl border-r border-gray-200`}>
+    <div
+      className={`${
+        isTablet ? "w-64" : "w-72"
+      } bg-white min-h-screen shadow-xl border-r border-gray-200`}
+    >
       {sidebarContent}
     </div>
-  )
+  );
 }

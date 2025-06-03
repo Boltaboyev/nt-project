@@ -189,6 +189,7 @@ export default function LoginPage() {
                   />
 
                   <Button
+                  onClick={()=>localStorage.setItem("token", "asdasffasdfsadfadsadfsdf")}
                     type="submit"
                     fullWidth
                     variant="contained"

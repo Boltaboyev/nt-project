@@ -17,6 +17,7 @@ import {
 import { Search, Notifications, Add } from "@mui/icons-material";
 import { useState } from "react";
 import { Menu } from "@mui/material";
+import { LogOut } from "lucide-react";
 export default function Navbar({
   searchTerm,
   setSearchTerm,
@@ -150,25 +151,23 @@ export default function Navbar({
                 </Avatar>{" "}
               </Button>{" "}
               <Menu
-                className="m-[0px] py-0"
+                className="!m-[0px] !py-0"
                 id="basic-menu"
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
                 MenuListProps={{ "aria-labelledby": "basic-button" }}
               >
-                {" "}
                 <Button
-                  className="m-[0px]"
+                  className="!m-[0px] !text-black"
                   onClick={() => {
                     handleLogout();
                     handleClose();
                   }}
                 >
-                  {" "}
-                  Logout{" "}
-                </Button>{" "}
-              </Menu>{" "}
+                  <LogOut  className="mr-2"/> Logout
+                </Button>
+              </Menu>
             </div>{" "}
           </div>{" "}
         </div>{" "}

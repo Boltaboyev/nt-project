@@ -4,8 +4,8 @@ import cookie from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-const navigate = useNavigate()
 export const useLoginMutation = () => {
+  const navigate = useNavigate();
   return useMutation({
     mutationKey: ["login"],
     mutationFn: (data) =>
@@ -18,7 +18,7 @@ export const useLoginMutation = () => {
       cookie.set("token", data.token);
       cookie.set("user", JSON.stringify(data));
       toast.success("Tizimga kirdingiz");
-      navigate("/")
+      navigate("/");
     },
     onError(err) {
       toast.error(`Xatolik ${err?.response?.data?.message}`);
@@ -31,15 +31,32 @@ export const useLogOutMutation = () => {
   return useMutation({
     mutationKey: ["logout"],
     mutationFn: () => {
-      return ((resolve) => {
+      return (resolve) => {
         cookie.remove("token");
         cookie.remove("user");
         resolve();
-      });
+      };
     },
     onSuccess() {
       toast.success("Tizimdan chiqdingiz");
       navigate("login");
+    },
+    onError(err) {
+      toast.error(`Xatolik ${err?.response?.data?.message}`);
+    },
+  });
+};
+
+// Create group mutation
+export const useCreateGroupMutation = () => {
+  return useMutation({
+    mutationKey: ["create-group"],
+    mutationFn: (data) =>
+      request.post("/groups", {
+        ...data,
+      }),
+    onSuccess() {
+      toast.success("Guruh yaratildi");
     },
     onError(err) {
       toast.error(`Xatolik ${err?.response?.data?.message}`);
